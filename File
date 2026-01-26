@@ -1,12 +1,20 @@
 @echo off
-:: Получаем права владельца на папку Рабочий стол
-takeown /F "%USERPROFILE%\Desktop" /R /D Y
+cls
+echo LECHIM PRAVA... (Nado podozhdat 5-10 sec)
 
-:: Выдаем полные права группе "Все" (на русском и английском на всякий случай)
-icacls "%USERPROFILE%\Desktop" /grant "Все":(OI)(CI)F /T /C
-icacls "%USERPROFILE%\Desktop" /grant "Everyone":(OI)(CI)F /T /C
-icacls "%USERPROFILE%\Desktop" /grant "%USERNAME%":(OI)(CI)F /T /C
+:: 1. Жестко захватываем владельца (рекурсивно)
+takeown /F "%USERPROFILE%\Desktop" /R /D Y >nul 2>&1
+
+:: 2. Выдаем права через универсальный код S-1-1-0 (Это группа "Все" на любом языке)
+:: (OI)(CI)F = Полный доступ + наследование
+:: /T = Применить ко всем вложенным папкам
+:: /C = Игнорировать ошибки (если файл занят системой)
+:: /Q = Тихий режим (не спамить текстом)
+
+icacls "%USERPROFILE%\Desktop" /grant *S-1-1-0:(OI)(CI)F /T /C /Q >nul 2>&1
 
 echo.
-echo GOTOVO!
-timeout /t 3
+echo ==========================================
+echo GOTOVO! Proveryay.
+echo ==========================================
+pause
