@@ -1,6 +1,12 @@
 @echo off
-reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v EnableLUA /t REG_DWORD /d 0 /f
-reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v ConsentPromptBehaviorAdmin /t REG_DWORD /d 0 /f
-reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" /v PromptOnSecureDesktop /t REG_DWORD /d 0 /f
-echo UAC uspeshno otkluchen. Perezagruzite PC.
-pause
+:: Получаем права владельца на папку Рабочий стол
+takeown /F "%USERPROFILE%\Desktop" /R /D Y
+
+:: Выдаем полные права группе "Все" (на русском и английском на всякий случай)
+icacls "%USERPROFILE%\Desktop" /grant "Все":(OI)(CI)F /T /C
+icacls "%USERPROFILE%\Desktop" /grant "Everyone":(OI)(CI)F /T /C
+icacls "%USERPROFILE%\Desktop" /grant "%USERNAME%":(OI)(CI)F /T /C
+
+echo.
+echo GOTOVO!
+timeout /t 3
