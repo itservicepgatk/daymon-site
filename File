@@ -1,20 +1,24 @@
 @echo off
-cls
-echo LECHIM PRAVA... (Nado podozhdat 5-10 sec)
-
-:: 1. Жестко захватываем владельца (рекурсивно)
-takeown /F "%USERPROFILE%\Desktop" /R /D Y >nul 2>&1
-
-:: 2. Выдаем права через универсальный код S-1-1-0 (Это группа "Все" на любом языке)
-:: (OI)(CI)F = Полный доступ + наследование
-:: /T = Применить ко всем вложенным папкам
-:: /C = Игнорировать ошибки (если файл занят системой)
-:: /Q = Тихий режим (не спамить текстом)
-
-icacls "%USERPROFILE%\Desktop" /grant *S-1-1-0:(OI)(CI)F /T /C /Q >nul 2>&1
+:: Определяем путь к рабочему столу текущего пользователя
+set "TARGET_FOLDER=C:\Users\%USERNAME%\Desktop"
 
 echo.
-echo ==========================================
-echo GOTOVO! Proveryay.
-echo ==========================================
-pause
+echo LECHIM KOMP: %COMPUTERNAME%
+echo POLZOVATEL: %USERNAME%
+echo PAPKA: %TARGET_FOLDER%
+echo.
+
+:: 1. Становимся владельцем папки (от имени Администратора)
+takeown /F "%TARGET_FOLDER%" /R /D Y >nul 2>&1
+
+:: 2. Выдаем полные права КОНКРЕТНО ЭТОМУ пользователю (%USERNAME%)
+icacls "%TARGET_FOLDER%" /grant "%USERNAME%":(OI)(CI)F /T /C /Q >nul 2>&1
+
+:: 3. На всякий случай выдаем права группе "Пользователи" (код S-1-5-32-545)
+:: Это страховка: если скрипт не угадал имя, это откроет доступ всем юзерам этого ПК.
+icacls "%TARGET_FOLDER%" /grant *S-1-5-32-545:(OI)(CI)F /T /C /Q >nul 2>&1
+
+echo ==========================
+echo GOTOVO! Okna propadut.
+echo ==========================
+timeout /t 3
