@@ -1,52 +1,37 @@
 @echo off
-chcp 65001 >nul
-echo Начинаем настройку вечного режима IE...
-
-:: Проверка прав администратора
+echo Step 1: Checking Administrator rights...
 net session >nul 2>&1
 if %errorLevel% == 0 (
-    echo Права администратора подтверждены.
+    echo Success: Admin rights confirmed.
 ) else (
-    echo =====================================================
-    echo ОШИБКА: Запустите этот файл от имени АДМИНИСТРАТОРА!
-    echo (Правая кнопка мыши - Запуск от имени администратора)
-    echo =====================================================
+    echo ERROR: Please right-click and run as Administrator.
     pause
     exit
 )
 
-:: 1. Создаем папку для списка сайтов (скрытую от глаз, чтобы случайно не удалили)
+echo Step 2: Creating folder C:\EdgeIEMode...
 if not exist "C:\EdgeIEMode" mkdir "C:\EdgeIEMode"
 
-:: 2. Создаем файл sites.xml с вашими ссылками
-(
-echo ^<site-list version="10"^>
-echo   ^<site url="e-respondent.belstat.gov.by"^>
-echo     ^<compat-mode^>Default^</compat-mode^>
-echo     ^<open-in^>IE11^</open-in^>
-echo   ^</site^>
-echo   ^<site url="portal2.ssf.gov.by"^>
-echo     ^<compat-mode^>Default^</compat-mode^>
-echo     ^<open-in^>IE11^</open-in^>
-echo   ^</site^>
-echo ^</site-list^>
-) > "C:\EdgeIEMode\sites.xml"
+echo Step 3: Creating sites.xml file...
+REM Записываем файл построчно, чтобы избежать ошибок синтаксиса
+echo ^<site-list version="10"^> > "C:\EdgeIEMode\sites.xml"
+echo ^<site url="e-respondent.belstat.gov.by"^> >> "C:\EdgeIEMode\sites.xml"
+echo ^<compat-mode^>Default^</compat-mode^> >> "C:\EdgeIEMode\sites.xml"
+echo ^<open-in^>IE11^</open-in^> >> "C:\EdgeIEMode\sites.xml"
+echo ^</site^> >> "C:\EdgeIEMode\sites.xml"
+echo ^<site url="portal2.ssf.gov.by"^> >> "C:\EdgeIEMode\sites.xml"
+echo ^<compat-mode^>Default^</compat-mode^> >> "C:\EdgeIEMode\sites.xml"
+echo ^<open-in^>IE11^</open-in^> >> "C:\EdgeIEMode\sites.xml"
+echo ^</site^> >> "C:\EdgeIEMode\sites.xml"
+echo ^</site-list^> >> "C:\EdgeIEMode\sites.xml"
 
-echo Файл списка сайтов создан успешно.
-
-:: 3. Вносим изменения в реестр
-echo Настройка реестра...
-
-:: Включаем интеграцию IE
-reg add "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v "InternetExplorerIntegrationLevel" /t REG_DWORD /d 1 /f >nul
-
-:: Указываем путь к нашему файлу
-reg add "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v "InternetExplorerIntegrationSiteList" /t REG_SZ /d "file:///C:/EdgeIEMode/sites.xml" /f >nul
+echo Step 4: Updating Registry...
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v "InternetExplorerIntegrationLevel" /t REG_DWORD /d 1 /f
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Edge" /v "InternetExplorerIntegrationSiteList" /t REG_SZ /d "file:///C:/EdgeIEMode/sites.xml" /f
 
 echo.
-echo ==========================================
-echo ГОТОВО! Настройка завершена.
-echo Теперь перезапустите браузер Microsoft Edge.
-echo Таймер в 30 дней больше не будет вас беспокоить.
-echo ==========================================
+echo =======================================================
+echo DONE! Settings applied.
+echo Please restart Microsoft Edge completely.
+echo =======================================================
 pause
