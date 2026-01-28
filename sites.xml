@@ -1,0 +1,13 @@
+<site-list version="2">
+  <!-- БЕЛСТАТ -->
+  <site url="e-respondent.belstat.gov.by">
+    <compat-mode>Default</compat-mode>
+    <open-in>IE11</open-in>
+  </site>
+
+  <!-- ФСЗН (Ваша новая ссылка) -->
+  <site url="portal2.ssf.gov.by">
+    <compat-mode>Default</compat-mode>
+    <open-in>IE11</open-in>
+  </site>
+</site-list>
